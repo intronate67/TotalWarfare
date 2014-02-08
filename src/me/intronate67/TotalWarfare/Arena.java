@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import me.intronate67.TotalWarfare.ArenaManager.Team;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,12 +17,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 public class Arena {
 	
 	private boolean started = false;
 	private int id;
-	private ArrayList<PlayerData> players = new ArrayList<PlayerData>();
+	protected ArrayList<PlayerData> players = new ArrayList<PlayerData>();
+	
+	private Scoreboard sb;
+	private Objective o;
+	private Score heroes, demons;
 	private Location redspawn, bluespawn;
 	
 	protected Arena(int id){
@@ -31,6 +39,11 @@ public class Arena {
 		
 		this.redspawn = getLocation(conf.getConfigurationSection("redspawn"));
 		this.bluespawn = getLocation(conf.getConfigurationSection("bluespawn"));
+		
+		sb = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
+		o = sb.registerNewObjective("Team Scores", "dummy");
+		heroes = o.getScore(Bukkit.getServer().getOfflinePlayer(ChatColor.RED + "Heroes"));
+		demons = o.getScore(Bukkit.getServer().getOfflinePlayer(ChatColor.RED + "Demons"));
 	}
 	
 	private Location getLocation(ConfigurationSection path){
@@ -120,11 +133,25 @@ public class Arena {
 		
 		p.teleport(getSpawn(getData(p).getTeam()));
 		
+		p.setScoreboard(sb);
+		
 		if(players.size() >= 2) start();
 	}
 	
 	public void removePlayer(Player p){
-		players.remove(getData(p));
+		PlayerData pd = getData(p);
+		p.getInventory().clear();
+		p.getInventory().addItem(pd.getInventory().getContents());
+		p.getInventory().setArmorContents(pd.getInventory().getArmorContents());
+		
+		p.teleport(pd.getLocation());
+		
+		p.setScoreboard(null);
+		
+		players.remove(pd);
+		
+		MessageManager.getInstance().info(p, "You lost the game.");
+		msg(p.getName() + " lost the game.");
 	}
 	
 	public void start(){
@@ -147,6 +174,12 @@ public class Arena {
 			
 			p.teleport(pd.getLocation());
 		}
+	}
+	
+	public void addDeath(Player p){
+		Team t = getTeam(p);
+		if(t == Team.RED) demons.setScore(demons.getScore() + 1);
+		else heroes.setScore(heroes.getScore() + 1);
 	}
 	
 	private void msg(String msg){
