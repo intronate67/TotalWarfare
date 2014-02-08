@@ -13,6 +13,9 @@ public class MessageManager {
 		return instance;
 	}
 	
+	private String prefix = ChatColor.BLUE + "[" + ChatColor.GREEN + "TotalWarfare" + ChatColor.BLUE + "]";
+	
+	
 	public void info(CommandSender s, String msg){
 		msg(s, ChatColor.BLUE, msg);
 	}
@@ -26,7 +29,7 @@ public class MessageManager {
 	}
 	
 	private void msg(CommandSender s, ChatColor color, String msg){
-		s.sendMessage(color + msg);
+		s.sendMessage(prefix + color + msg);
 	}
 
 }
