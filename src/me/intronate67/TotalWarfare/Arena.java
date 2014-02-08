@@ -1,0 +1,178 @@
+package me.intronate67.TotalWarfare;
+
+import java.util.ArrayList;
+
+import me.intronate67.TotalWarfare.ArenaManager.Team;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+public class Arena {
+	
+	private boolean started = false;
+	private int id;
+	private ArrayList<PlayerData> players = new ArrayList<PlayerData>();
+	private Location redspawn, bluespawn;
+	
+	protected Arena(int id){
+		this.id = id;
+		
+		ConfigurationSection conf = SettingsManager.getInstance().get(id + "");
+		
+		this.redspawn = getLocation(conf.getConfigurationSection("redspawn"));
+		this.bluespawn = getLocation(conf.getConfigurationSection("bluespawn"));
+	}
+	
+	private Location getLocation(ConfigurationSection path){
+		return new Location(
+				Bukkit.getServer().getWorld("world"),
+				path.getDouble("x"),
+				path.getDouble("y"),
+				path.getDouble("z"));
+	}
+	
+	public int getID(){
+		return id;
+	}
+	
+	public boolean isStarted(){
+		return started;
+	}
+	
+	public void setStarted(boolean started){
+		this.started = started;
+	}
+	
+	public Location getSpawn(Team team){
+		switch(team){
+			case RED: return redspawn;
+			case BLUE: return bluespawn;
+			default: return null;
+		}
+	}
+	
+	public Team getTeam(Player p){
+		return getData(p).getTeam();
+	}
+	
+	public void addPlayer(Player p){
+		//Heroes default class paladin.
+		// TODO: Add other hero Classes.
+		//Sword
+		ItemStack ironSword = new ItemStack(Material.IRON_SWORD);
+		ItemMeta ironMeta = ironSword.getItemMeta();
+		ironMeta.setDisplayName("Holy Light");
+		ironSword.setItemMeta(ironMeta);
+		ironSword.addEnchantment(Enchantment.DAMAGE_UNDEAD, 1);
+		//Armor
+		//Helmet
+		ItemStack lHelm = new ItemStack(Material.LEATHER_HELMET, 1);
+		LeatherArmorMeta lHelmMeta = (LeatherArmorMeta)lHelm.getItemMeta();
+		lHelmMeta.setColor(Color.WHITE);
+		//Chestplate
+		ItemStack lChest = new ItemStack(Material.LEATHER_CHESTPLATE);
+		LeatherArmorMeta lChestMeta = (LeatherArmorMeta)lChest.getItemMeta();
+		lChestMeta.setColor(Color.WHITE);
+		//Leggings
+		ItemStack lLegs = new ItemStack(Material.LEATHER_LEGGINGS);
+		LeatherArmorMeta lLegsMeta = (LeatherArmorMeta)lLegs.getItemMeta();
+		lLegsMeta.setColor(Color.WHITE);
+		//Boots
+		ItemStack lBoots = new ItemStack(Material.LEATHER_BOOTS);
+		LeatherArmorMeta lBootsMeta = (LeatherArmorMeta)lBoots.getItemMeta();
+		lBootsMeta.setColor(Color.WHITE);
+		//Demon default class Brute.
+		//Sword
+		ItemStack stoneSword = new ItemStack(Material.STONE_SWORD);
+		ItemMeta stoneMeta = stoneSword.getItemMeta();
+		stoneMeta.setDisplayName("Gnarly Claw");
+		stoneSword.setItemMeta(stoneMeta);
+		stoneSword.addEnchantment(Enchantment.DURABILITY, 10);
+		//Armor
+		ItemStack iChest = new ItemStack(Material.IRON_CHESTPLATE);
+		
+		players.add(new PlayerData(p.getName(), getTeamWithLessPlayers(), p.getInventory(), p.getLocation()));
+		for(PlayerData pd : players){
+			if(pd.getTeam() == Team.RED){
+				p.getInventory().clear();
+				p.getInventory().addItem(ironSword);
+				p.getInventory().setHelmet(lHelm);
+				p.getInventory().setChestplate(lChest);
+				p.getInventory().setLeggings(lLegs);
+				p.getInventory().setBoots(lBoots);
+			}else{
+				p.getInventory().clear();
+				p.getActivePotionEffects().add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 0, 600));
+				p.getInventory().addItem(stoneSword);
+				p.getInventory().setChestplate(iChest);
+			}
+		}
+		
+		p.teleport(getSpawn(getData(p).getTeam()));
+		
+		if(players.size() >= 2) start();
+	}
+	
+	public void removePlayer(Player p){
+		players.remove(getData(p));
+	}
+	
+	public void start(){
+		msg("Game starting in 30 seconds!");
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(SettingsManager.getInstance().getPlugin(), new Runnable(){
+			public void run(){
+				Arena.this.started = true;
+				msg("Good luck!");
+			}
+		}, 30 * 20);
+	}
+	
+	public void stop(Player winner){
+		msg(winner != null ? winner.getName() + " won the game!" : "The game was ended.");
+		for(PlayerData pd : players){
+			Player p = Bukkit.getServer().getPlayer(pd.getPlayerName());
+			p.getInventory().clear();
+			p.getInventory().addItem(pd.getInventory().getContents());
+			p.getInventory().setArmorContents(pd.getInventory().getArmorContents());
+			
+			p.teleport(pd.getLocation());
+		}
+	}
+	
+	private void msg(String msg){
+		for(PlayerData pd : players){
+			Player p = Bukkit.getServer().getPlayer(pd.getPlayerName());
+			MessageManager.getInstance().info(p, msg);
+		}
+	}
+	
+	private Team getTeamWithLessPlayers(){
+		int red = 0, blue = 0;
+		for(PlayerData pd : players){
+			if(pd.getTeam() == Team.RED) red ++;
+			else blue++;
+		}
+		if(red > blue) return Team.BLUE;
+		else return Team.RED;
+	}
+	
+	public boolean containsPlayer(Player p){
+		return getData(p) != null;
+	}
+	private PlayerData getData(Player p){
+		for(PlayerData pd : players){
+			if(pd.getPlayerName().equalsIgnoreCase(p.getName())) return pd;
+		}
+		return null;
+	}
+}
