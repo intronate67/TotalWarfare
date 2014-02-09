@@ -4,6 +4,7 @@ import me.intronate67.TotalWarfare.listeners.ArmorRemove;
 import me.intronate67.TotalWarfare.listeners.BlockBreak;
 import me.intronate67.TotalWarfare.listeners.LobbySign;
 import me.intronate67.TotalWarfare.listeners.PlayerAttack;
+import me.intronate67.TotalWarfare.listeners.PlayerCapture;
 import me.intronate67.TotalWarfare.listeners.PlayerDeath;
 import me.intronate67.TotalWarfare.listeners.PlayerLeave;
 import me.intronate67.TotalWarfare.listeners.PlayerLoseHunger;
@@ -27,6 +28,7 @@ public class TotalWarfare extends JavaPlugin{
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerDeath(), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new PlayerLoseHunger(), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new PlayerCapture(), this);
 		
 	}
 
