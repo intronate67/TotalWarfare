@@ -15,13 +15,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
-public class Arena {
+public class Arena extends JavaPlugin{
 	
 	private boolean started = false;
 	private int id;
@@ -31,6 +32,7 @@ public class Arena {
 	private Objective o;
 	private Score heroes, demons;
 	private Location redspawn, bluespawn;
+	private Location capturePoint;
 	
 	protected Arena(int id){
 		this.id = id;
@@ -38,13 +40,14 @@ public class Arena {
 		ConfigurationSection conf = SettingsManager.getInstance().get(id + "");
 		
 		this.redspawn = getLocation(conf.getConfigurationSection("redspawn"));
-		this.bluespawn = getLocation(conf.getConfigurationSection("bluespawn"));
+		this.bluespawn = getLocation(conf.getConfigurationSection( "bluespawn"));
 		
 		sb = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
 		o = sb.registerNewObjective("Team Scores", "dummy");
 		heroes = o.getScore(Bukkit.getServer().getOfflinePlayer(ChatColor.RED + "Heroes"));
 		demons = o.getScore(Bukkit.getServer().getOfflinePlayer(ChatColor.RED + "Demons"));
 	}
+	Arena a = ArenaManager.getInstance().getArena(id);
 	
 	private Location getLocation(ConfigurationSection path){
 		return new Location(
@@ -52,6 +55,10 @@ public class Arena {
 				path.getDouble("x"),
 				path.getDouble("y"),
 				path.getDouble("z"));
+	}
+	public Location getCaptureLocation(){
+		return (Location) this.getConfig().getConfigurationSection(a.getID() + "." + "capturePoint").getValues(true);
+	
 	}
 	
 	public int getID(){
@@ -72,6 +79,9 @@ public class Arena {
 			case BLUE: return bluespawn;
 			default: return null;
 		}
+	}
+	public Location getCapture(){
+		return capturePoint;
 	}
 	
 	public Team getTeam(Player p){
@@ -164,8 +174,8 @@ public class Arena {
 		}, 30 * 20);
 	}
 	
-	public void stop(Player winner){
-		msg(winner != null ? winner.getName() + " won the game!" : "The game was ended.");
+	public void stop(Team pTeam){
+		msg(pTeam != null ? pTeam.name() + " won the game!" : "The game was ended.");
 		for(PlayerData pd : players){
 			Player p = Bukkit.getServer().getPlayer(pd.getPlayerName());
 			p.getInventory().clear();
