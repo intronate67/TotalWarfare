@@ -35,7 +35,7 @@ public enum Team { RED, BLUE; }
 	
 	public Arena getArena(int id) {
 		for (Arena a : arenas) {
-			if(!(SettingsManager.getInstance().<ConfigurationSection>get(id + "") == null)){
+			if(SettingsManager.getInstance().<ConfigurationSection>get(id + "") != null){
 				return a;
 			}
 		}
