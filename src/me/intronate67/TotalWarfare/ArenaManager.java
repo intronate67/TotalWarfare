@@ -3,6 +3,7 @@ package me.intronate67.TotalWarfare;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class ArenaManager {
@@ -34,7 +35,10 @@ public enum Team { RED, BLUE; }
 	
 	public Arena getArena(int id) {
 		for (Arena a : arenas) {
-			if (a.getID() == id) return a;
+			if(SettingsManager.getInstance().<ConfigurationSection>get(id + "") == null){
+				
+			}
+			return a;
 		}
 		return null;
 	}
