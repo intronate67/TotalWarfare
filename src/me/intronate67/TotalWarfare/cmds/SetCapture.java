@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class SetCapture extends SubCommand{
 
 	public void onCommand(Player p, String[] args){
-		if(args.length < 2){
+		if(args.length < 1){
 			MessageManager.getInstance().severe(p, "You did not specify enough arguments!");
 			return;
 		}
@@ -25,7 +25,7 @@ public class SetCapture extends SubCommand{
 		
 		Arena a = ArenaManager.getInstance().getArena(id);
 		
-		if(a == null){
+		if(SettingsManager.getInstance().<ConfigurationSection>get(id + "") == null){
 			MessageManager.getInstance().severe(p, "There is no arena with ID " + id + "!");
 			return;
 		}
