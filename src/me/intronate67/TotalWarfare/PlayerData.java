@@ -3,34 +3,35 @@ package me.intronate67.TotalWarfare;
 import me.intronate67.TotalWarfare.ArenaManager.Team;
 
 import org.bukkit.Location;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerData {
 
 	private String player;
 	private Team team;
-	private PlayerInventory inv;
+	private ItemStack[] contents;
 	private Location loc;
 	
-	
-	public PlayerData(String player, Team team, PlayerInventory inv, Location loc){
+	public PlayerData(String player, Team team, ItemStack[] contents, Location loc) {
 		this.player = player;
 		this.team = team;
-		this.inv = inv;
+		this.contents = contents;
 		this.loc = loc;
 	}
 	
-	public String getPlayerName(){
+	public String getPlayerName() {
 		return player;
 	}
 	
-	public Team getTeam(){
+	public Team getTeam() {
 		return team;
 	}
-	public PlayerInventory getInventory(){
-		return inv;
+	
+	public ItemStack[] getContents() {
+		return contents;
 	}
-	public Location getLocation(){
+	
+	public Location getLocation() {
 		return loc;
 	}
 }
