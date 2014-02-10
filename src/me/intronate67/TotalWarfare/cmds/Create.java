@@ -8,21 +8,26 @@ import me.intronate67.TotalWarfare.SettingsManager;
 
 public class Create extends SubCommand{
 	
-	public void onCommand(Player p, String[] args){
+	public void onCommand(Player p, String[] args) {
 		int id = ArenaManager.getInstance().getArenas().size() + 1;
+		
 		SettingsManager.getInstance().createConfigurationSection(id + "");
-		MessageManager.getInstance().good(p, "Created Arena: " + id + "!");
+		
+		MessageManager.getInstance().good(p, "Created Arena " + id + "!");
+		
+		ArenaManager.getInstance().setup();
 	}
 	
-	public String name(){
+	public String name() {
 		return "create";
 	}
-	public String info(){
+	
+	public String info() {
 		return "Create an arena.";
 	}
 	
-	public String[] aliases(){
-		return new String[]{ "c" };
+	public String[] aliases() {
+		return new String[] { "c" };
 	}
 
 }
