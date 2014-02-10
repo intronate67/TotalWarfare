@@ -17,6 +17,7 @@ public class LobbySign implements Listener{
 	public void onPlayerInteract(PlayerInteractEvent e){
 		if(!(e.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 		if(!(e.getClickedBlock().getType() == Material.SIGN) && !(e.getClickedBlock().getType() == Material.SIGN_POST)) return;
+		
 		Sign s = (Sign) e.getClickedBlock().getState();
 		
 		if(s.getLine(0).equals(ChatColor.BLUE + "[" + ChatColor.GREEN + "TotalWarfare" + ChatColor.BLUE + "]")){
@@ -45,7 +46,7 @@ public class LobbySign implements Listener{
 			return;
 		}
 		
-		e.setLine(0, ChatColor.BLUE + "[" + ChatColor.GREEN + "TotalWarfare" + ChatColor.BLUE + "]");
+		e.setLine(0, ChatColor.GREEN + "[" + ChatColor.BLUE + "TotalWarfare" + ChatColor.GREEN + "]");
 	}
 	
 	//SignFormat
