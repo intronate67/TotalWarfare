@@ -1,19 +1,18 @@
 package me.intronate67.TotalWarfare.cmds;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-
 import me.intronate67.TotalWarfare.Arena;
 import me.intronate67.TotalWarfare.Arena.ArenaState;
 import me.intronate67.TotalWarfare.ArenaManager;
 import me.intronate67.TotalWarfare.MessageManager;
-import me.intronate67.TotalWarfare.SettingsManager;
+import me.intronate67.TotalWarfare.MessageManager.MessageType;
+
+import org.bukkit.entity.Player;
 
 public class ForceStart extends SubCommand{
 
 	public void onCommand(Player p, String[] args) {
 		if (args.length == 0) {
-			MessageManager.getInstance().severe(p, "You must specify an arena ID.");
+			MessageManager.getInstance().msg(p, MessageType.BAD, "You must specify an arena ID.");
 			return;
 		}
 		
@@ -21,24 +20,24 @@ public class ForceStart extends SubCommand{
 		
 		try { id = Integer.parseInt(args[0]); }
 		catch (Exception e) {
-			MessageManager.getInstance().severe(p, args[0] + " is not a valid number!");
+			MessageManager.getInstance().msg(p, MessageType.BAD, args[0] + " is not a valid number!");
 			return;
 		}
 		
 		Arena a = ArenaManager.getInstance().getArena(id);
 		
-		if (SettingsManager.getInstance().<ConfigurationSection>get(id + "") == null) {
-			MessageManager.getInstance().severe(p, "There is no arena with ID " + id + "!");
+		if (a == null) {
+			MessageManager.getInstance().msg(p, MessageType.BAD, "There is no arena with ID " + id + "!");
 			return;
 		}
 		
 		if (a.getState() == ArenaState.STARTED) {
-			MessageManager.getInstance().severe(p, "Arena " + id + " has already started!");
+			MessageManager.getInstance().msg(p, MessageType.BAD, "Arena " + id + " has already started!");
 			return;
 		}
 		
 		a.start();
-		MessageManager.getInstance().good(p, "Force started Arena " + a.getID() + "!");
+		MessageManager.getInstance().msg(p, MessageType.GOOD, "Force started arena " + a.getID() + "!");
 	}
 	
 	public String name() {
