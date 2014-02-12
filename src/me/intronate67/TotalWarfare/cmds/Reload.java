@@ -7,7 +7,7 @@ import me.intronate67.TotalWarfare.MessageManager;
 
 public class Reload extends SubCommand{
 	public void onCommand(Player p, String[] args) {
-		ArenaManager.getInstance().setup();
+		ArenaManager.getInstance().setupArenas();
 		MessageManager.getInstance().good(p, "Reloaded!");
 	}
 	
