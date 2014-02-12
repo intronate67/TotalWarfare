@@ -1,69 +1,59 @@
 package me.intronate67.TotalWarfare;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 public class SettingsManager {
+
+	private static SettingsManager arenas = new SettingsManager("arenas");
+	private static SettingsManager lobbySigns = new SettingsManager("lobbysigns");
 	
-private SettingsManager() { }
-	
-	private static SettingsManager instance = new SettingsManager();
-	
-	public static SettingsManager getInstance() {
-		return instance;
+	public static SettingsManager getArenas() {
+		return arenas;
 	}
 	
-	private Plugin p;
-	private FileConfiguration arenas;
-	private File afile;
+	public static SettingsManager getLobbySigns() {
+		return lobbySigns;
+	}
 	
-	public void setup(Plugin p) {
-		this.p = p;
+	/*****/
+	
+	private SettingsManager(String fileName) {
+		System.out.println(TotalWarfare.getPlugin());
 		
-		if (!p.getDataFolder().exists()) p.getDataFolder().mkdir();
+		if (!TotalWarfare.getPlugin().getDataFolder().exists())TotalWarfare.getPlugin().getDataFolder().mkdir();
 		
-		afile = new File(p.getDataFolder(), "arenas.yml");
+		file = new File(TotalWarfare.getPlugin().getDataFolder(), fileName + ".yml");
 		
-		boolean n = false;
-		
-		if (!afile.exists()) {
-			try { afile.createNewFile(); n = true; }
+		if (!file.exists()) {
+			try { file.createNewFile(); }
 			catch (Exception e) { e.printStackTrace(); }
 		}
 		
-		arenas = YamlConfiguration.loadConfiguration(afile);
-		
-		if (n) set("ids", new ArrayList<String>());
+		config = YamlConfiguration.loadConfiguration(file);
+	}
+	
+	private File file;
+	private FileConfiguration config;
+	
+	public void set(String path, Object value) {
+		config.set(path, value);
+		try { config.save(file); }
+		catch (Exception e) { e.printStackTrace(); }
+	}
+	
+	public ConfigurationSection createConfigurationSection(String path) {
+		ConfigurationSection cs = config.createSection(path);
+		try { config.save(file); }
+		catch (Exception e) { e.printStackTrace(); }
+		return cs;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> T get(String path) {
-		return (T) arenas.get(path);
+		return (T) config.get(path);
 	}
-	
-	public void set(String path, Object value) {
-		arenas.set(path, value);
-		save();
-	}
-	
-	public ConfigurationSection createConfigurationSection(String path) {
-		ConfigurationSection s = arenas.createSection(path);
-		save();
-		return s;
-	}
-	
-	private void save() {
-		try { arenas.save(afile); }
-		catch (Exception e) { e.printStackTrace(); }
-	}
-	
-	public Plugin getPlugin() {
-		return p;
-	}
-	
 }
