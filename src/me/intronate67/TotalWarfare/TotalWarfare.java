@@ -7,16 +7,18 @@ import me.intronate67.TotalWarfare.listeners.PlayerAttack;
 import me.intronate67.TotalWarfare.listeners.PlayerDeath;
 import me.intronate67.TotalWarfare.listeners.PlayerLeave;
 import me.intronate67.TotalWarfare.listeners.PlayerLoseHunger;
+import me.intronate67.TotalWarfare.listeners.SignManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class TotalWarfare extends JavaPlugin{
 	
 	public void onEnable(){
-		SettingsManager.getInstance().setup(this);
+		Bukkit.getServer().getPluginManager().registerEvents(new SignManager(), this);
 		
-		ArenaManager.getInstance().setup();
+		ArenaManager.getInstance().setupArenas();
 		
 		CommandManager cm = new CommandManager();
 		cm.setup();
@@ -35,6 +37,9 @@ public class TotalWarfare extends JavaPlugin{
 		for(Arena a : ArenaManager.getInstance().getArenas()){
 			a.stop(null);
 		}
+	}
+	public static Plugin getPlugin() {
+		return Bukkit.getServer().getPluginManager().getPlugin("TotalWarfare");
 	}
 
 }
