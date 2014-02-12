@@ -12,6 +12,7 @@ import me.intronate67.TotalWarfare.cmds.Leave;
 import me.intronate67.TotalWarfare.cmds.Reload;
 import me.intronate67.TotalWarfare.cmds.SetCapture;
 import me.intronate67.TotalWarfare.cmds.SetLocation;
+import me.intronate67.TotalWarfare.cmds.SetSpawn;
 import me.intronate67.TotalWarfare.cmds.SubCommand;
 
 import org.bukkit.command.Command;
@@ -33,6 +34,7 @@ public class CommandManager implements CommandExecutor{
 		commands.add(new Reload());
 		commands.add(new SetLocation());
 		commands.add(new SetCapture());
+		commands.add(new SetSpawn());
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
