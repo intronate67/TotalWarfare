@@ -7,13 +7,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class PlayerLeave implements Listener{
-	
+public class PlayerLeave implements Listener {
+
 	@EventHandler
-	public void onPlayerLeave(PlayerQuitEvent e){
+	public void onPlayerQuit(PlayerQuitEvent e) {
 		Arena a = ArenaManager.getInstance().getArena(e.getPlayer());
-		if(a == null) return;
-		a.removePlayer(e.getPlayer());
+		if (a == null) return;
+		a.removePlayer(e.getPlayer(), false);
 	}
 
 }
