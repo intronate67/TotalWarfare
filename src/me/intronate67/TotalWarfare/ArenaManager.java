@@ -1,14 +1,13 @@
 package me.intronate67.TotalWarfare;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class ArenaManager {
-	
-public enum Team { RED, BLUE; }
+
+	public enum Team { HEROES, DEMONS; }
 	
 	private ArenaManager() { }
 	
@@ -17,16 +16,17 @@ public enum Team { RED, BLUE; }
 	public static ArenaManager getInstance() {
 		return instance;
 	}
-	
 	private ArrayList<Arena> arenas = new ArrayList<Arena>();
 	
-	public void setup() {
-		try {
-			for (int i : SettingsManager.getInstance().<List<Integer>>get("ids")) {
-				arenas.add(new Arena(i));
-			}
+	
+	public void setupArenas() {
+		if (SettingsManager.getArenas().<ConfigurationSection>get("arenas") == null) SettingsManager.getArenas().createConfigurationSection("arenas");
+
+        arenas.clear();
+		
+		for (String key : SettingsManager.getArenas().<ConfigurationSection>get("arenas").getKeys(false)) {
+			arenas.add(new Arena(Integer.parseInt(key)));
 		}
-		catch (Exception ignored) { }
 	}
 	
 	public ArrayList<Arena> getArenas() {
@@ -35,9 +35,7 @@ public enum Team { RED, BLUE; }
 	
 	public Arena getArena(int id) {
 		for (Arena a : arenas) {
-			if(SettingsManager.getInstance().<ConfigurationSection>get(id + "") != null){
-				return a;
-			}
+			if (a.getID() == id) return a;
 		}
 		return null;
 	}
