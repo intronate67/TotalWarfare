@@ -20,7 +20,7 @@ public class LobbySign implements Listener{
 		
 		Sign s = (Sign) e.getClickedBlock().getState();
 		
-		if(s.getLine(0).equals(ChatColor.BLUE + "[" + ChatColor.GREEN + "TotalWarfare" + ChatColor.BLUE + "]")){
+		if(s.getLine(0).equals(ChatColor.BLUE + "TotalWarfare")){
 			int id = -1;
 			try{ id = Integer.parseInt(s.getLine(2)); }
 			catch (Exception ex) {
@@ -33,7 +33,7 @@ public class LobbySign implements Listener{
 	}
 	@EventHandler
 	public void onSignChange(SignChangeEvent e){
-		if(e.getLines().length > 0 && !e.getLine(0).equalsIgnoreCase("[TotalWarfare]")) return;
+		if(e.getLines().length > 0 && !e.getLine(0).equalsIgnoreCase("TotalWarfare")) return;
 		if(e.getLines().length < 3){
 			e.getBlock().breakNaturally();
 			MessageManager.getInstance().severe(e.getPlayer(), "A TotalWarfare sign must have ay least 3 lines!");
@@ -46,13 +46,13 @@ public class LobbySign implements Listener{
 			return;
 		}
 		
-		e.setLine(0, ChatColor.GREEN + "[" + ChatColor.BLUE + "TotalWarfare" + ChatColor.GREEN + "]");
+		e.setLine(0, ChatColor.BLUE + "TotalWarfare");
 	}
 	
 	//SignFormat
 	/**
 	 * [TotalWarfare]
-	 * Join Arena
+	 * Join
 	 * #
 	 */
 
