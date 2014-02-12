@@ -36,9 +36,9 @@ public class Delete extends SubCommand{
 			return;
 		}
 		
-		SettingsManager.getInstance().set(id + "", null);
+		SettingsManager.getArenas().set(id + "", null);
 
-		ArenaManager.getInstance().setup();
+		ArenaManager.getInstance().setupArenas();
 	}
 	
 	public String name() {
