@@ -1,55 +1,58 @@
 package me.intronate67.TotalWarfare.cmds;
 
-import me.intronate67.TotalWarfare.Arena;
-import me.intronate67.TotalWarfare.ArenaManager;
-import me.intronate67.TotalWarfare.MessageManager;
-import me.intronate67.TotalWarfare.SettingsManager;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-public class SetCapture extends SubCommand{
+import me.intronate67.TotalWarfare.ArenaManager;
+import me.intronate67.TotalWarfare.MessageManager;
+import me.intronate67.TotalWarfare.MessageManager.MessageType;
+import me.intronate67.TotalWarfare.SettingsManager;
 
-	public void onCommand(Player p, String[] args){
-		if(args.length < 1){
-			MessageManager.getInstance().severe(p, "You did not specify enough arguments!");
+public class SetLocation extends SubCommand{
+
+	public void onCommand(Player p, String[] args) {
+		if (args.length == 0) {
+			MessageManager.getInstance().msg(p, MessageType.BAD, "You did not specify an arena ID.");
 			return;
 		}
 		
 		int id = -1;
-		try{ id = Integer.parseInt(args[0]); }
+		
+		try { id = Integer.parseInt(args[0]); }
 		catch (Exception e) {
-			MessageManager.getInstance().severe(p, args[0] + " is not a valid arena!");
+			MessageManager.getInstance().msg(p, MessageType.BAD, args[0] + " is not a valid number!");
 			return;
 		}
 		
-		Arena a = ArenaManager.getInstance().getArena(id);
-		
-		if(SettingsManager.getArenas().<ConfigurationSection>get(id + "") == null){
-			MessageManager.getInstance().severe(p, "There is no arena with ID " + id + "!");
+		if (SettingsManager.getArenas().<ConfigurationSection>get("arenas." + id) == null) {
+			MessageManager.getInstance().msg(p, MessageType.BAD, "There is no arena with ID " + id + "!");
 			return;
 		}
-
 		
-		ConfigurationSection s = SettingsManager.getArenas().createConfigurationSection(a.getID() + "." + "capturePoint");
-		double x = p.getLocation().getX();
-		double y = p.getLocation().getY();
-		double z = p.getLocation().getZ();
-		s.set("captureWorld", p.getWorld().getName());
-		s.set("captureX", x);
-		s.set("captureY", y);
-		s.set("captureZ", z);
+		ConfigurationSection s = SettingsManager.getArenas().createConfigurationSection("arenas." + id + ".spawn");
 		
-		MessageManager.getInstance().good(p, "Set capture point for arena " + a.getID());
-	}
-	public String name(){
-		return "setcapture";
-	}
-	public String info(){
-		return "Set a capture point";
-	}
-	public String[] aliases(){
-		return new String[] { "sc" };
+		
+		s.set("world", p.getWorld().getName());
+		s.set("x", p.getLocation().getX());
+		s.set("y", p.getLocation().getY());
+		s.set("z", p.getLocation().getZ());
+		
+		SettingsManager.getArenas().set("arenas." + id + ".spawn", s);
+		
+		ArenaManager.getInstance().setupArenas();
+		
+		MessageManager.getInstance().msg(p, MessageType.GOOD, "Set lobby for arena " + id + "!");
 	}
 	
+	public String name() {
+		return "setlocation";
+	}
+	
+	public String info() {
+		return "Set a lobby location";
+	}
+	
+	public String[] aliases() {
+		return new String[] { "s" };
+	}
 }
