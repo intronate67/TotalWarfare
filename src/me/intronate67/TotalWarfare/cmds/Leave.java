@@ -14,12 +14,11 @@ public class Leave extends SubCommand{
 		Arena a = ArenaManager.getInstance().getArena(p);
 		
 		int id = -1;
-		if (SettingsManager.getInstance().<ConfigurationSection>get(id + "") == null) {
+		if (SettingsManager.getArenas().<ConfigurationSection>get(id + "") == null) {
 			MessageManager.getInstance().severe(p, "You are not in a game!");
 			return;
 		}
-		
-		a.removePlayer(p, false);
+	a.removePlayer(p, false);
 	}
 	
 	public String name() {
