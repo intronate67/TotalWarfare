@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import me.intronate67.TotalWarfare.ArenaManager;
 import me.intronate67.TotalWarfare.MessageManager;
+import me.intronate67.TotalWarfare.MessageManager.MessageType;
 import me.intronate67.TotalWarfare.SettingsManager;
 
 public class Create extends SubCommand{
@@ -11,11 +12,12 @@ public class Create extends SubCommand{
 	public void onCommand(Player p, String[] args) {
 		int id = ArenaManager.getInstance().getArenas().size() + 1;
 		
-		SettingsManager.getInstance().createConfigurationSection(id + "");
+		SettingsManager.getArenas().createConfigurationSection("arenas." + id);
+		SettingsManager.getArenas().set("arenas." + id + ".numPlayers", 10);
 		
-		MessageManager.getInstance().good(p, "Created Arena " + id + "!");
+		MessageManager.getInstance().msg(p, MessageType.GOOD, "Created Arena " + id + "!");
 		
-		ArenaManager.getInstance().setup();
+		ArenaManager.getInstance().setupArenas();
 	}
 	
 	public String name() {
